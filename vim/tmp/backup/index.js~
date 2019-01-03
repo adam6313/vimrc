@@ -1,0 +1,7 @@
+console.log('gitlag continuous integration')
+
+function _add(x, y) {
+  return x + y
+}
+
+module.exports = _add

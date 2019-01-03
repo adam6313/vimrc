@@ -1,0 +1,168 @@
+const _ = require('lodash');
+const { Req, nav_vnode, findVode } = require('../utils');
+const response = require('../structs/res');
+const { URL } = require('../var');
+
+/**
+ * 取得某年度, 某申請方式(甄試, 分發) 功能路徑
+ * @param { String } url
+ * @param { String } register
+ * @param { Number } year
+ * @param { String } selected
+ * @returns { String  }
+ */
+const Get_Schools = async (url, register, year, selected) => {
+  let err = null,
+      res = null
+
+  // 訪問網頁(www.com.tw)
+  const $ = await Req(url);
+  
+  // website not found
+  if ($ === null) {
+    err = 404;
+    return [err, res];
+  }
+
+  // navigation Object
+  const nav_obj = nav_vnode($, $('#nav2 .navigation'), {});
+
+  if (_.isEmpty(nav_obj)) {
+    err = 404;
+    return [err, res];
+    }
+
+  // 需前往的目標網址
+  const GotoURL = findVode(nav_obj, [register, year, selected], 3);
+
+  // website not found
+  if (!GotoURL) {
+    err = 404;
+    return [err, res];
+  }
+
+  // 訪問該網址
+  // 學校頁面
+  const $school = await Req(`${URL}${GotoURL}`);
+
+  // website not found
+  if ($school === null) {
+    err = 404;
+    return [err, res];
+  }
+
+  const GetSchools = {};
+  $school('div#university_list_row_height').each((i, elem) => {
+    const schoolCode = $school(elem).find('.schoolid').text();
+    const school = $school(elem).find('a');
+    GetSchools[schoolCode] = {
+      schoolCode,
+      school: school.text(),
+      url: school.attr('href'),
+    }
+  })
+
+  // 查詢不到學校資料表
+  if (_.isEmpty(GetSchools)) {
+    err = 2;
+    return [err, res];
+  }
+
+
+  return [err, {
+    url: `${URL}${GotoURL}`,
+    schools: GetSchools,
+  }]
+}
+
+/**
+ * 取得指定學校當年該申請入學方式 的所有科系
+ * @param { String  } url
+ * @param { Object } schoolInfo
+ * @property { String } schoolCode
+ * @property { String } school
+ * @property { String } url
+ */
+const Get_School_Department = async (url, schoolInfo, register) => {
+  const departmentsMap = {};
+  let beforeKey = '';
+  const re = new RegExp(String.fromCharCode(160), 'g');
+
+  let arr = [];
+
+
+  url = url.substr(0, url.lastIndexOf('/'));
+  const $ = await Req(`${url}/${schoolInfo.url}`);
+
+  $('#table1 > tbody > tr > td > #university_dep_row_height').each((i, elem) => {
+    const content = $(elem).text();
+    const attr = $(elem).find('a').attr('href');
+    if (register === '分發') {
+      switch(i % 5) {
+        case 0: {
+          beforeKey = content.replace(/\D/g, '');
+          departmentsMap[beforeKey] = {}
+          departmentsMap[beforeKey]['school'] = schoolInfo.school;
+          departmentsMap[beforeKey]['schoolCode'] = schoolInfo.schoolCode;
+          break;
+        }
+        case 1: {
+          departmentsMap[beforeKey]['department'] = content;
+          departmentsMap[beforeKey]['link'] = `${url}/${attr}`;
+        }
+        case 3: {
+          departmentsMap[beforeKey]['GroupCode'] = content.replace(/\D/g, '');
+          departmentsMap[beforeKey]['GroupName'] = content.replace(/\d/g, '');
+        }
+        case 4: {
+          departmentsMap[beforeKey]['score'] = content;
+        }
+      }
+    } else {
+      switch(i % 4) {
+        case 0: {
+          beforeKey = content.replace(/\D/g, '');
+          departmentsMap[beforeKey] = {};
+          departmentsMap[beforeKey]['school'] = schoolInfo.school;
+          departmentsMap[beforeKey]['schoolCode'] = schoolInfo.schoolCode;
+          break;
+        }
+        case 1: {
+          departmentsMap[beforeKey]['department'] = content;
+          departmentsMap[beforeKey]['link'] = `${url}/${attr}`;
+          break;
+        }
+        case 3: {
+          departmentsMap[beforeKey]['GroupCode'] = content.replace(/\D/g, '');
+          const [ Transform ] = content.replace(/\d/g, '').replace(re, '').split('\n').filter(i => i);
+          departmentsMap[beforeKey]['GroupName'] = Transform;
+        }
+      }
+    }
+  })
+  return departmentsMap;
+}
+
+const Get_Assign_Students = async(schoolInfo, key) => {
+  const student = [];
+  const re = new RegExp(String.fromCharCode(160), 'g');
+  console.log(schoolInfo)
+  return
+  const $ = await Req(schoolInfo.link);
+  $('#university_list_row_height > #university_list_row_height').each((i, elem) => {
+    const [ admission, name ] = $(elem).text().replace(re, '*').split('**');
+    student.push({
+      departmentCode: key,
+      admission,
+      name,
+      schoolCode: schoolInfo.schoolCode,
+      GroupCode: schoolInfo.GroupCode,
+      GroupName: schoolInfo.GroupName,
+      department: schoolInfo.department,
+      school: schoolInfo.school,
+    })
+  })
+  return student;
+}
+
+module.exports = { Get_Schools, Get_School_Department, Get_Assign_Students };

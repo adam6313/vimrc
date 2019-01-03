@@ -1,0 +1,50 @@
+package cmd
+
+import (
+	"clayatr/env"
+	"clayatr/router"
+	"fmt"
+	"net/http"
+	"time"
+
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
+	"github.com/spf13/cobra"
+)
+
+// serverCmd represents the server command
+var serverCmd = &cobra.Command{
+	Use:   "server",
+	Short: "Start Server",
+	Run: func(cmd *cobra.Command, args []string) {
+		Server()
+	},
+}
+
+func init() {
+	RootCmd.AddCommand(serverCmd)
+	serverCmd.Flags().StringVarP(&env.Port, "port", "p", "1324", "Server Port")
+	serverCmd.Flags().StringVarP(&env.Build, "build", "b", "0.0.0.0", "Server Build IP")
+}
+
+func Server() {
+	e := echo.New()
+	// start CORS
+	e.Use(middleware.CORS())
+	// Start Log
+	e.Use(middleware.Recover())
+
+	// start the http pprof
+
+	s := &http.Server{
+		Addr:         fmt.Sprintf("%v:%v", env.Build, env.Port),
+		ReadTimeout:  300 * time.Second,
+		WriteTimeout: 300 * time.Second,
+	}
+
+	router.Router(e)
+
+	e.Logger.Info("Server Start:" + env.Build + ":" + env.Port)
+	e.Logger.Info(e.StartServer(s))
+
+}

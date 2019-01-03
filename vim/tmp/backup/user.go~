@@ -1,0 +1,37 @@
+package user
+
+import (
+	s "clayatr/structs"
+	"net/http"
+
+	"github.com/labstack/echo"
+)
+
+func Login(c echo.Context) error {
+	v, _ := c.FormParams()
+
+	data := new(s.Login)
+
+	if err := c.Bind(data); err != nil {
+		return c.JSON(http.StatusOK, *s.ErrorResult("3"))
+	}
+
+	if err := c.Validate(data); err != nil {
+		return c.JSON(http.StatusOK, *s.ErrorResult("3"))
+	}
+
+	return c.JSON(http.StatusOK, "200")
+}
+
+//func Users(c echo.Context) (err error) {
+//u := new(user.UserStruct)
+//if err = c.Bind(u); err != nil {
+//fmt.Println("Bind err")
+//return
+//}
+//if err = c.Validate(u); err != nil {
+//fmt.Println("validate err")
+//return
+//}
+//return c.JSON(http.StatusOK, u)
+//}

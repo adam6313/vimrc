@@ -1,0 +1,78 @@
+package env
+
+import (
+	"time"
+)
+
+var (
+	// Port - server port
+	Port string
+	// Build -  server build ip
+	Build string
+	// Pprof - server pprof
+	// Loglevel - server log level
+	Loglevel int
+
+	//Limit - 限制數量
+	Limit int
+
+	// SysToken - System Token
+	SysToken string
+	// Debug - Env Debug Mode
+	Debug bool
+	// TimeZone - time zone
+	TimeZone *time.Location
+	// Version - server version
+	Version string
+	// Commit - server git commit md5
+	Commit string
+	//BuildTime -
+	BuildTime string
+	// ServerName - Server name
+	ServerName string
+	//Consul - config ip
+	Consul string
+
+	//AuthURL 驗證系統url
+	AuthURL string
+	//GameManagerURL Game Manager URL
+	GameManagerURL string
+	//UserURL 會員系統url
+	UserURL string
+	//PromoteURL 活動url
+	PromoteURL string
+
+	//RateURL 匯率URL
+	RateURL string
+
+	//PromoteRedURL 活動url
+	PromoteRedURL string
+
+	//LuckyBagURL 福袋模組url
+	LuckyBagURL string
+
+	//RichURL Rich模組的url
+	RichURL string
+
+	//DTURL 龍虎榜模組 URL
+	DTURL string
+
+	//LegendURL 龍虎榜模組 URL
+	LegendURL string
+
+	//SleepTime millesecond
+	SleepTime = 100
+
+	//APITimeOut APITimeOut
+	APITimeOut int
+
+	//MapAccount 存放袋
+	MapAccount map[string]string
+)
+
+func init() {
+	TimeZone = time.FixedZone("UTC-4", -4*60*60)
+	ServerName = "clayatr"
+	APITimeOut = 300
+	MapAccount = map[string]string{}
+}

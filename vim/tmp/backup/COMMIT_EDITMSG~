@@ -1,0 +1,46 @@
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+#
+# Initial commit
+#
+# Changes to be committed:
+#	new file:   .dockerignore
+#	new file:   .editorconfig
+#	new file:   .eslintrc.js
+#	new file:   .gitignore
+#	new file:   Dockerfile
+#	new file:   README.md
+#	new file:   api/ErrorCode.js
+#	new file:   api/config.js
+#	new file:   api/index.js
+#	new file:   api/instance.js
+#	new file:   api/router.js
+#	new file:   api/service.js
+#	new file:   assets/README.md
+#	new file:   components/Logo.vue
+#	new file:   components/README.md
+#	new file:   layouts/README.md
+#	new file:   layouts/default.vue
+#	new file:   middleware/README.md
+#	new file:   nuxt.config.js
+#	new file:   package-lock.json
+#	new file:   package.json
+#	new file:   pages/Login.vue
+#	new file:   pages/index.vue
+#	new file:   plugins/api/index.js
+#	new file:   plugins/iview/index.js
+#	new file:   plugins/iview/iview.scss
+#	new file:   server/controllers/user.js
+#	new file:   server/dbpool/index.js
+#	new file:   server/index.js
+#	new file:   server/router/index.js
+#	new file:   server/structs/codeMap.js
+#	new file:   server/structs/res.js
+#	new file:   server/var/index.js
+#	new file:   static/README.md
+#	new file:   static/favicon.ico
+#	new file:   store/README.md
+#	new file:   utils/index.js
+#

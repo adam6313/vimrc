@@ -1,0 +1,136 @@
+package customer
+
+import (
+	s "Cypress/echoPrject/structs"
+	"dbpool"
+	"fmt"
+	"net/http"
+
+	"github.com/labstack/echo"
+	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
+)
+
+// Customer 客戶
+// type Customer struct {
+// 	Id_       bson.ObjectId `bson:"_id"`
+// 	Name      string        `bson:"name"`
+// 	Age       int           `bson:"age"`
+// 	Status    string        `bson:"status"`
+// 	JoinedAt  time.Time     `bson:"joined_at"`
+// 	Interests []string      `bson:"interests"`
+// }
+//LoginRequest  登入參數
+type LoginRequest struct {
+	Account  string `form:"account" query:"account"  validate:"required"`
+	Password string `form:"password" query:"password"  validate:"required"`
+}
+type Customer struct {
+	Id_        bson.ObjectId `bson:"_id"`
+	Identity   string        `bson:"identity"`   // 身分證字號
+	Age        int           `bson:"age"`        // 年齡
+	Sex        string        `bson:"sex"`        // 性別
+	Name       string        `bson:"name"`       // 姓名
+	Tel        string        `bson:"tel"`        // 市話
+	Phone      string        `bson:"phone"`      // 手機
+	Registered string        `bson:"registered"` // 註冊時間
+	Birthdat   string        `bson:"birthday"`   // 生日
+	Marriage   bool          `bson:"marriage"`   // 婚姻狀況
+	Blood      string        `bson:"blood"`      // 血型
+	Height     int64         `bson:"height"`     // 身高
+	Weight     int64         `bson:"weight"`     // 體重
+}
+
+// id, identity,Age, sex, name, tel, phone, registered, birthday, marriage, blood
+// height, weight, profession, address, fax, contactPerson,
+
+func Login(c echo.Context) error {
+	v, _ := c.FormParams()
+	fmt.Printf("%v", v)
+	data := new(LoginRequest)
+	if err := c.Bind(data); err != nil {
+		fmt.Printf("%v", err)
+		return c.JSON(http.StatusOK, "err")
+	}
+	return c.JSON(http.StatusOK, "err")
+}
+
+// All customer
+func All(e echo.Context) (err error) {
+	session, DB := getDB("Customer")
+	defer session.Close()
+	var result []Customer
+	err = DB.Find(bson.M{}).All(&result)
+	if err != nil {
+		panic(err)
+	}
+	//return e.JSON(http.StatusOK, &s.Output{Data: result, Status: *s.Result("0")})
+	//return e.JSON(http.StatusOK, s.Output{Data: result, Status: s.Result("0")})
+
+	return e.JSON(http.StatusOK, &s.Output{Data: result, Status: *s.Result("0")})
+}
+
+// Find Customer where by id
+func FindCustomer(e echo.Context) (err error) {
+	value, _ := e.FormParams()
+	fmt.Printf("data=%v \n", value)
+
+	_id := e.Param("id")
+	session, DB := getDB("Customer")
+	defer session.Close()
+
+	var result Customer
+	err = DB.Find(bson.M{"_id": bson.ObjectIdHex(_id)}).One(&result)
+	if err != nil {
+		panic(err)
+	}
+	//return e.JSON(http.StatusOK, s.Output{Data: result, Status: *s.Result("0")})
+	return e.JSON(http.StatusOK, &s.Output{Data: result, Status: *s.Result("0")})
+}
+
+// Insert Customer
+func InsertCustomer(e echo.Context) (err error) {
+	value, _ := e.FormParams()
+	fmt.Printf("%v", value["name"])
+	return e.JSON(http.StatusOK, "OK")
+	//session, DB := getDB("Customer")
+	//defer session.Close()
+	//// 不重複
+	//index := mgo.Index{
+	//Key:        []string{"identity"},
+	//Unique:     true,
+	//DropDups:   true,
+	//Background: true, // See notes.
+	//Sparse:     true,
+	//}
+
+	//if err = DB.EnsureIndex(index); err != nil {
+	//return e.JSON(http.StatusOK, &s.Output{Data: nil, Status: s.Status{Code: "2", Message: "error"}})
+	//// return
+	//}
+	//u := new(Customer)
+	//if err = e.Bind(u); err != nil {
+	//return
+	//}
+	//local, _ := time.LoadLocation("Local")
+	//u.Id_ = bson.NewObjectId()
+	//u.Registered = time.Now().In(local).Format(time.RFC3339)
+	//if err = DB.Insert(u); err != nil {
+	//if mgo.IsDup(err) {
+	//return e.JSON(http.StatusOK, *s.ErrorResult("3"))
+	//}
+	//return e.JSON(http.StatusOK, *s.ErrorResult("2"))
+	//}
+	//return e.JSON(http.StatusOK, &s.Output{Data: u, Status: *s.Result("0")})
+}
+
+// get mongodb db
+func getDB(collection string) (*mgo.Session, *mgo.Collection) {
+	session, err := dbpool.GetPool().GetMgoDB("mgo")
+	if err != nil {
+		panic(err)
+	}
+	session.SetMode(mgo.Monotonic, true)
+	DB := session.DB("Pandora").C(collection)
+	return session, DB
+}

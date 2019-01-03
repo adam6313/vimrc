@@ -1,0 +1,15 @@
+package router
+
+import (
+	"clayatr/controller/user"
+	"clayatr/structs"
+
+	"github.com/labstack/echo"
+	"gopkg.in/go-playground/validator.v9"
+)
+
+func Router(e *echo.Echo) {
+	e.Validator = &structs.CustomValidator{Validator: validator.New()}
+
+	e.POST("/Login", user.Login)
+}

@@ -1,0 +1,20 @@
+package structs
+
+import (
+	"gopkg.in/go-playground/validator.v9"
+)
+
+type Login struct {
+	Account  string `form:"account" query:"account" validate:"required"`
+	Password string `form:"password" query:"account" validate:"required"`
+}
+
+// Custom validator
+type CustomValidator struct {
+	Validator *validator.Validate
+}
+
+// Validate -
+func (cv *CustomValidator) Validate(i interface{}) error {
+	return cv.Validator.Struct(i)
+}

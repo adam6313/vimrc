@@ -1,0 +1,129 @@
+package env
+
+import (
+	"CypressModule/config"
+	"CypressModule/dbpool"
+	"CypressModule/output"
+	"fmt"
+	"log"
+)
+
+func Load() {
+	setConfig()
+	setToken()
+	setOutput()
+	setHost()
+	maria()
+}
+
+func setHost() {
+	if Debug {
+		AuthURL = "http://192.168.4.130:8080/dev/"
+		UserURL = "http://192.168.4.130:8080/dev/"
+		PromoteURL = "http://192.168.4.130:8100/dev/"
+		PromoteRedURL = "http://192.168.4.130:8100/dev/"
+		// PromoteURL = "http://192.168.205.69:1324/promotion/"
+		// PromoteRedURL = "http://192.168.205.133:1324/"
+		RichURL = "http://192.168.4.130:8080/dev/"
+		RateURL = "http://192.168.4.130:8080/dev/"
+		GameManagerURL = "http://192.168.4.130:8080/dev/"
+		LuckyBagURL = "http://192.168.205.7:9999/"
+		LegendURL = "http://192.168.4.130:8100/dev/"
+		// LegendURL = "http://192.168.205.52:1324/"
+
+		// DTURL = "http://192.168.205.52:1324/"
+		DTURL = "http://192.168.4.130:8100/dev/"
+
+	} else {
+		authHost, err := config.GetString("api.auth.host")
+		check(err)
+		userHost, err := config.GetString("api.user.host")
+		check(err)
+		promoteHost, err := config.GetString("api.promotion.host")
+		check(err)
+		promoteRedHost, err := config.GetString("api.promored.host")
+		check(err)
+		luckyBagHost, err := config.GetString("api.luckybag.host")
+		check(err)
+		richHost, err := config.GetString("api.rich.host")
+		check(err)
+		rateHost, err := config.GetString("api.rate.host")
+		check(err)
+		gamemanagerHost, err := config.GetString("api.gamemanager.host")
+		check(err)
+		dtviewerHost, err := config.GetString("api.dtviewer.host")
+		check(err)
+		legendHost, err := config.GetString("api.legendviewer.host")
+		check(err)
+
+		AuthURL = fmt.Sprintf("http://%v/", authHost)
+		UserURL = fmt.Sprintf("http://%v/", userHost)
+		PromoteURL = fmt.Sprintf("http://%v/", promoteHost)
+		PromoteRedURL = fmt.Sprintf("http://%v/", promoteRedHost)
+		LuckyBagURL = fmt.Sprintf("http://%v/", luckyBagHost)
+		RichURL = fmt.Sprintf("http://%v/", richHost)
+		RateURL = fmt.Sprintf("http://%v/", rateHost)
+		GameManagerURL = fmt.Sprintf("http://%v/", gamemanagerHost)
+		DTURL = fmt.Sprintf("http://%v/", dtviewerHost)
+		LegendURL = fmt.Sprintf("http://%v/", legendHost)
+
+	}
+}
+
+func setConfig() {
+	if Consul != "" {
+		config.Domain(Consul)
+	} else {
+		config.Domain("192.168.4.130")
+	}
+	fmt.Println("Consul IP :", Consul)
+}
+
+func setOutput() {
+	output.SName(ServerName)
+}
+
+func setToken() {
+	if Debug {
+		SysToken = "5fc732311905cb27e82d67f4f6511f7f"
+	} else {
+		systoken, err := config.GetString("system.systoken")
+		check(err)
+		SysToken = systoken
+	}
+}
+
+func check(err error) {
+	if err != nil {
+		log.Fatal("Error:", err)
+	}
+}
+
+func maria() {
+	db := dbpool.Config{
+		ConnName: "maria",
+	}
+	switch Debug {
+	case true:
+		// db.IP = "127.0.0.1"
+		// db.Port = "3306"
+		db.Host = "192.168.4.138:3306"
+		db.UserName = "Cdoctor_agg"
+		db.Password = "cNewtonapple_AGG"
+		db.DBName = "promotion"
+	default:
+		// db.IP, _ = config.GetString("service.wallet.db.mariadb.master.ip")
+		// db.Port, _ = config.GetString("service.wallet.db.mariadb.master.port")
+		db.Host, _ = config.GetString("service.wallet.db.mariadb.master.host")
+		db.UserName, _ = config.GetString("service.wallet.db.mariadb.master.user")
+		db.Password, _ = config.GetString("service.wallet.db.mariadb.master.password")
+		db.DBName, _ = config.GetString("service.wallet.db.mariadb.master.dbname")
+	}
+	check(dbpool.GetPool().NewDB(dbpool.Mdb, db))
+	mdb, err := dbpool.GetPool().GetMariaDB(db.ConnName)
+	if err == nil {
+		mdb.DB().SetMaxOpenConns(50)
+		mdb.DB().SetMaxIdleConns(25)
+	}
+
+}

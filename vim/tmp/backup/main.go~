@@ -1,0 +1,9 @@
+package main
+
+import (
+	"clayatr/cmd"
+)
+
+func main() {
+	cmd.Execute()
+}

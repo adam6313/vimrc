@@ -1,0 +1,12 @@
+#image: node:8.14-alpine
+
+before_script:
+  - npm install
+
+stages: 
+  - test
+
+test_job:
+  stage: test
+  script:
+    - npm run test

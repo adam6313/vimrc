@@ -1,0 +1,5 @@
+const app = require('./router');
+
+app.listen(3000, () => {
+  console.log('listen to port 3000');
+});

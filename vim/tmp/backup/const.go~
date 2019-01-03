@@ -1,0 +1,49 @@
+package structs
+
+//USERID 使用者編碼
+const USERID = "userid"
+
+//ACCOUNT  帳號
+const ACCOUNT = "account"
+
+//OWNERID 總代理id
+const OWNERID = "ownerid"
+
+//PARENTID 總代理id
+const PARENTID = "parentid"
+
+// IsSystem - 公司  只有自家公司的才是 SYSTEM
+const IsSystem = "SYSTEM"
+
+// IsOP - 操作人員  目前有site 及 cs
+const IsOP = "OP"
+
+// IsCS - 操作人員  目前有site 及 cs
+const IsCS = "cs"
+
+// IsSite - 操作人員  目前有site 及 cs
+const IsSite = "site"
+
+//IsCurrent  目前的
+const IsCurrent = "current"
+
+//IsPast  過去的
+const IsPast = "past"
+
+//IsTiger  tiger  虎榜
+const IsTiger = "tiger"
+
+//IsDragon  dragon  龍榜
+const IsDragon = "dragon"
+
+//IsT  tiger  虎榜
+const IsT = "T"
+
+//IsD  dragon  龍榜
+const IsD = "D"
+
+//IsL1  傳派
+const IsL1 = "l1"
+
+//IsL2  奇派
+const IsL2 = "l2"

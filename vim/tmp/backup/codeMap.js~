@@ -1,0 +1,8 @@
+module.exports = {
+  0: 'success',
+  2: 'school not found',
+  3: 'SQL Error',
+  500: 'error',
+  404: 'server not found',
+  100: 'something wrong'
+}

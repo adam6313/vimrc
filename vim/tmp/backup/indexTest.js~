@@ -1,0 +1,9 @@
+const chai = require("chai");
+const main = require('../index');
+const expect = chai.expect;
+
+describe("smoke test", function() {
+  it("checks equality", function() {
+    expect(main(1,2)).to.equal(3);
+  });
+});

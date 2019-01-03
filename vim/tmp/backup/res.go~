@@ -1,0 +1,45 @@
+package structs
+
+import "time"
+
+type Status struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+	Time    string `json:"time"`
+}
+
+type Output struct {
+	Data   interface{} `json:"data"`
+	Status `josn:"status"`
+}
+
+var StatusMap = map[string]string{
+	"0":   "success",
+	"3":   "Bad parameters",
+	"100": "Something wrong",
+}
+
+func Result(code string) (result *Status) {
+	Now := time.Now()
+	local, _ := time.LoadLocation("Local")
+
+	msg, ok := StatusMap[code]
+	if !ok {
+		msg = StatusMap["100"]
+	}
+
+	result = &Status{
+		Code:    code,
+		Message: msg,
+		Time:    Now.In(local).Format(time.RFC3339),
+	}
+	return
+}
+
+func ErrorResult(code string) (result *Output) {
+	result = &Output{
+		Data:   nil,
+		Status: *Result(code),
+	}
+	return
+}

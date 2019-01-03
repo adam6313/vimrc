@@ -1,0 +1,26 @@
+[
+  {
+    "department": "科技校院四年制及專科學校二年制聯合甄選委員會",
+    "Website": [
+        {
+          "title": "107學年度四技二專甄選入學各群類考科級距對照表",
+          "url": "http://210.61.8.236/107_4y/107Grade_Mapping.pdf",
+        }, {
+          "title": "第一階段各校系科組學程統一入學測驗篩選標準",
+          "url": "https://www.jctv.ntut.edu.tw/downloads/107/apply/0001.pdf",
+        }, {
+          "title": "第一階段各招生群類別報名人次統計表",
+          "url": "https://www.jctv.ntut.edu.tw/downloads/107/apply/0002.pdf",
+        }, {
+          "title": "第一階段各校報名人次統計表",
+          "url": "https://www.jctv.ntut.edu.tw/downloads/107/apply/0003.pdf",
+        }
+     ]
+  }, {
+    "department": "A"
+  }, {
+    "department": "B"
+  }
+ 
+]
+
